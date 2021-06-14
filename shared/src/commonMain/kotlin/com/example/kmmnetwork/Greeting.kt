@@ -33,6 +33,7 @@ class Greeting {
         install(JsonFeature) {
             val json = kotlinx.serialization.json.Json {
                 ignoreUnknownKeys = true
+                // This issue is temporarily fix as per https://stackoverflow.com/q/67969562/3286489
                 useAlternativeNames = false
             }
             serializer = KotlinxSerializer(json)
