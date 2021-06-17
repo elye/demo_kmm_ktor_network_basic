@@ -2,29 +2,39 @@ package com.example.kmmnetwork.android
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.kmmnetwork.Greeting
+import android.view.View
+import com.example.kmmnetwork.Fetcher
 import android.widget.TextView
+import com.example.kmmnetwork.android.databinding.ActivityMainBinding
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private val greeting = Greeting()
+    private val fetcher = Fetcher()
     private val mainScope = MainScope()
+
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+        binding.resultText.text = "<No Result>"
+    }
 
-        val tv: TextView = findViewById(R.id.text_view)
-        tv.text = "Loading..."
+    fun beginSearch(view: View) {
+        val keyword = binding.searchText.text
+        if (keyword.isNullOrEmpty()) return
 
+        binding.resultText.text = "Loading..."
         mainScope.launch {
             kotlin.runCatching {
-                greeting.greeting()
+                fetcher.fetch(keyword.toString())
             }.onSuccess {
-                tv.text = it
+                binding.resultText.text = it
             }.onFailure {
-                tv.text = "Error: ${it.localizedMessage}"
+                binding.resultText.text = "Error: ${it.localizedMessage}"
             }
         }
     }

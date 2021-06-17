@@ -2,24 +2,38 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-	let greeting = Greeting()
-
-	@State var greet = "Loading..."
+	private let fetcher = Fetcher()
+	@State var output = "<No Result>"
+	@State var keyword = ""
 
 	func load() {
-	    greeting.greeting { result, error in
+	    guard !keyword.isEmpty else {
+          return
+        }
+        self.output = "Loading..."
+	    fetcher.fetch(keyword: keyword) { result, error in
 	        if let result = result {
-	            self.greet = result
+	            self.output = result
 	        } else if let error = error {
-	            greet = "Error: \(error)"
+	            keyword = "Error: \(error)"
 	        }
 	    }
 	}
 
 	var body: some View {
-		Text(greet).onAppear() {
-		    load()
-		}
+        VStack {
+            TextField(
+                "Search Keyword",
+                text: $keyword
+            )
+            .frame(width: 300)
+            .multilineTextAlignment(.center)
+            .autocapitalization(.none)
+            .disableAutocorrection(true)
+            .border(Color(UIColor.separator))
+            Button("Search", action: load)
+            Text(output)
+	    }
 	}
 }
 

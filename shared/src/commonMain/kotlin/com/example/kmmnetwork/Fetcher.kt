@@ -5,12 +5,9 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.ContentType.Application.Json
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
-class Greeting {
+class Fetcher {
 
     object Model {
         @Serializable
@@ -43,11 +40,11 @@ class Greeting {
     }
 
     @Throws(Exception::class)
-    suspend fun greeting(): String {
-        return "Hello, ${Platform().platform}!\n${getHello()}"
+    suspend fun fetch(keyword: String): String {
+        return "Hello, ${Platform().platform}!\n${getHitCount(keyword)}"
     }
 
-    private suspend fun getHello(): Model.Result {
-        return httpClient.get("https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=multiplatform")
+    private suspend fun getHitCount(keyword: String): Model.Result {
+        return httpClient.get("https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=$keyword")
     }
 }
