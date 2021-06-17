@@ -5,6 +5,8 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import kotlinx.serialization.Serializable
 
 class Fetcher {
@@ -45,6 +47,15 @@ class Fetcher {
     }
 
     private suspend fun getHitCount(keyword: String): Model.Result {
-        return httpClient.get("https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=$keyword")
+        return httpClient.submitForm(
+            url = "https://en.wikipedia.org/w/api.php",
+            formParameters = Parameters.build {
+                append("action", "query")
+                append("format", "json")
+                append("list", "search")
+                append("srsearch", keyword)
+            },
+            encodeInQuery = true
+        )
     }
 }
