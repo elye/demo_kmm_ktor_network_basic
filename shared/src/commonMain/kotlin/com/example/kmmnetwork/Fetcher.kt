@@ -43,7 +43,8 @@ class Fetcher {
 
     @Throws(Exception::class)
     suspend fun fetch(keyword: String): String {
-        return "Hello, ${Platform().platform}!\n${getHitCount(keyword)}"
+        val hitCountModel = getHitCount(keyword)
+        return "Hello, ${Platform().platform}!\n$keyword:${hitCountModel.query.searchinfo.totalhits}"
     }
 
     private suspend fun getHitCount(keyword: String): Model.Result {
